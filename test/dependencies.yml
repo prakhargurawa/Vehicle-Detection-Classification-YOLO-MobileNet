@@ -1,0 +1,17 @@
+name: car-project-env
+channels:
+  - defaults
+dependencies:
+  - keras=2.2.4
+  - tensorflow=1.10.0
+  - opencv=3.4.2
+  - numpy=1.15.1
+  - opencv=3.4.2
+  - pillow=8.1.0
+  - pip=10.0.1
+  - py-opencv=3.4.2
+  - python=3.6.6
+  - tensorflow=1.10.0
+  - matplotlib=2.2.3
+prefix: C:\Users\Marcial\Anaconda3\envs\
+
