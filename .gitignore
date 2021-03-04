@@ -1,3 +1,8 @@
+*.weights
+*.h5
+logs/
+*_test.py
+
 logs/
 *_test.py
 
