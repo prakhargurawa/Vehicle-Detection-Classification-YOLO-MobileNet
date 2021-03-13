@@ -22,13 +22,11 @@ from PIL import Image
 import PIL
 print(PIL.PILLOW_VERSION)
 
-
-base_model = MobileNetV2(weights='imagenet',
-                             include_top=False,
-                             input_shape=(180, 180, 3))  # imports the mobilenet model and discards the last 1000 neuron layer.
-
+# Reference : https://analyticsindiamag.com/a-practical-guide-to-implement-transfer-learning-in-tensorflow/
+base_model = MobileNetV2(weights='imagenet',include_top=False,input_shape=(180, 180, 3))  # imports the mobilenet model and discards the last 1000 neuron layer.
 # Freeze the base model
 base_model.trainable = False
+
 model = Sequential([
         base_model,
         Dense(512, activation='relu'),
@@ -39,10 +37,10 @@ model = Sequential([
         Flatten(),
         Dense(1, activation='sigmoid')
 ])
-
+"""
 # Unfreeze the new layers 
-for layer in model.layers[1:]:
-    layer.trainable =  True
+for layer in model.layers[0:]:
+    layer.trainable =  True"""
         
 for layer in model.layers:
     print(layer.name,layer.trainable)
@@ -66,9 +64,6 @@ validation_generator = train_datagen.flow_from_directory(
         class_mode='binary',
         subset='validation',
         shuffle=True) 
-
-
-
 print(model.summary())
 
 # It's important to recompile your model after you make any changes
@@ -78,34 +73,38 @@ print(model.summary())
 # Selection of optimizer : https://towardsdatascience.com/7-tips-to-choose-the-best-optimizer-47bb9c1219e
 # Adam is the best among the adaptive optimizers in most of the cases.
 
-# Adam optimizer
-# loss function will be binary cross entropy
-# evaluation metric will be accuracy
+# Adam optimizer,loss function will be binary cross entropy,evaluation metric will be accuracy
+algo = "Adam"
 model.compile(optimizer = keras.optimizers.Adam(1e-5), loss='binary_crossentropy', metrics=['accuracy'])
-#model.compile(optimizer='RMSProp', loss='binary_crossentropy', metrics=['accuracy'])
 
-
-# pip install --upgrade Pillow  <-- https://github.com/ContinuumIO/anaconda-issues/issues/10737
-# uninstalling pillow installed using conda and re-installing using pip works
+#algo = "RMSProp"
+#model.compile(optimizer= keras.optimizers.RMSprop(lr=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
+"""
+NOTE :
+    There might be some isuue like:
+            "cannot identify image file %r" % (filename if filename else fp)
+            PIL.UnidentifiedImageError: cannot identify image file <_io.BytesIO object at 0x00000214A7DAE678>
+    To resolve this use below command inside your environment:
+    # pip install --upgrade Pillow  <-- https://github.com/ContinuumIO/anaconda-issues/issues/10737
+    # uninstalling pillow installed using conda and re-installing using pip works    
+"""
 step_size_train=train_generator.n//train_generator.batch_size
 step_size_val=validation_generator.n//validation_generator.batch_size
+ep = 50
 
 history = model.fit_generator(generator=train_generator,
                    steps_per_epoch=step_size_train,
                    validation_data=validation_generator,
                    validation_steps=step_size_val,
-                   epochs=10) 
+                   epochs=ep) 
 
-model.save('saved_models\mobilenet_adam_10epoch_car_classification')
+model.save("saved_models\Mobilenet_"+str(algo)+"_"+str(ep)+"epoch_car_classification")
 
 # https://www.kaggle.com/vasantvohra1/transfer-learning-using-mobilenet
-
 acc = history.history['acc']
 val_acc = history.history['val_acc']
-
 loss = history.history['loss']
 val_loss = history.history['val_loss']
-
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
