@@ -12,6 +12,15 @@
 * python MobileNet_TransferLearning.py
 * python VideoReader.py
 
+## Working Demo:
+
+![alt text](https://github.com/prakhargurawa/Vehicle-Detection-Classification-YOLO-MobileNet/blob/main/saved_models/Output.gif?raw=true)
+
+## Base Structure of Mobilenet:
+
+![alt text](https://github.com/prakhargurawa/Vehicle-Detection-Classification-YOLO-MobileNet/blob/main/saved_models/MobileNetModel.png?raw=true)
+
+
 
 ## TODO
 * Optimize pipeline for faster processing (using producer-consumer,multithreading)
