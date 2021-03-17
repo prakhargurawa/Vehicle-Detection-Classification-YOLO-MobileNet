@@ -9,6 +9,12 @@ import numpy as np
 import cv2
 cv2.__version__
     
+"""
+NOTE:
+    This is an outdated method to detect cars in video. 
+    We will use YOLO as it gives better results by better detecting cars.
+    This implementation is just for reference and understanding.
+"""
 # Read the assignment clip
 carVideo = cv2.VideoCapture('test/assignment-clip.mp4')
 
