@@ -19,6 +19,9 @@ Predicted_Results = pd.read_excel("Car_Results.xls")
 TotalCarTrue = Ground_Truth_Results.Total
 TotalCarPredicted = Predicted_Results.Total
 
+print("\n***********************************************************")
+print("      Accuracy/F1 Score with respect to Ground Truth")
+print("***********************************************************")
 print("Accuracy : ",accuracy_score(TotalCarTrue,TotalCarPredicted))
 
 # Query-1

@@ -14,10 +14,8 @@ class CarClassifier:
     def __init__(self):
         # https://www.tensorflow.org/guide/keras/save_and_serialize
         print("<<::::: Loading PreTrained Model Weigths :::::>>")
-        #self.model = keras.models.load_model('saved_models/Mobilenet_RMSProp_50epoch_car_classification')
-        self.model = keras.models.load_model('saved_models/Mobilenet_Adam_50epoch_car_classification')
-        #self.model = keras.models.load_model('saved_models/Mobilenet_Adam_50epoch_car_classificationX')
-        #self.model = keras.models.load_model('saved_models/Mobilenet_Adam_50epoch_car_classification_with_data_augmentation')
+        # self.model = keras.models.load_model('saved_models/Mobilenet_RMSProp_car_classification')
+        self.model = keras.models.load_model('saved_models/Mobilenet_Adam_car_classification')
         print("<<::::: Loading PreTrained Model Weigths Completed :::::>>")
             
     def load_image(img, show=False):
