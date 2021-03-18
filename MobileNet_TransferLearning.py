@@ -22,6 +22,14 @@ from PIL import Image
 import PIL
 print(PIL.PILLOW_VERSION)
 
+"""
+Notes:
+    Not used regularization as was not giving good results
+    Removed Data augmentation, as was making epoch reuirement higher and model more complex
+    Dropout helped a lot to reduce overfitting
+    Adam provides better results than RMSProp
+"""
+
 # Reference : https://analyticsindiamag.com/a-practical-guide-to-implement-transfer-learning-in-tensorflow/
 base_model = MobileNetV2(weights='imagenet',include_top=False,input_shape=(180, 180, 3))  # imports the mobilenet model and discards the last 1000 neuron layer.
 # Freeze the base model
@@ -128,9 +136,11 @@ history = model.fit_generator(generator=train_generator,
                    validation_steps=step_size_val,
                    epochs=ep) 
 
+# Saving the model 
 model.save("saved_models\Mobilenet_"+str(algo)+"_"+str(ep)+"epoch_car_classification")
 
 # https://www.kaggle.com/vasantvohra1/transfer-learning-using-mobilenet
+# Plotting the progress
 acc = history.history['acc']
 val_acc = history.history['val_acc']
 loss = history.history['loss']

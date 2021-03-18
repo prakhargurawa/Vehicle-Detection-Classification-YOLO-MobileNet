@@ -25,38 +25,41 @@ class ObjectDetector:
         
                 
     def detection_and_classification_task(self,frame_no,image):
+        # This function does same job to call car classifier but is used by executor framework
         image,position_list = self.yolo.detect_image(image)
         q = list()
+        i = 0
         for position in position_list:
-            if position["class"] == "car":
-                prediction = self.carClassifier.classify_car(image,position)
+            if position["class"] == "car": # Only useful classes for our case is Car
+                prediction = self.carClassifier.classify_car(image,position,frame_no,i)
+                i = i+1
                 position = (position["left"] + 10,position["top"] + 10)
                 car = Car(position,prediction)
                 q.append(car)
             self.detectedCars[frame_no] = (q,image)
                   
     def detection(self,queue):
-        # For testing purpose 
-        # queue = queue[:50]
-        # Standard implementation of car detection and classification 
+        # Object Detection is done using YOLO or TinyYOLO with is trained on COCO Dataset which has 80 classes 
+        # can find list of classes from the file model_data/coco_classes
+        # APPROCH 1: Standard implementation of car detection and classification 
         start_time = time.time()
         for frame in queue:
             frame_no,image = frame.get_frame_no(),frame.get_image()
-            image,position_list = self.yolo.detect_image(image)
+            image,position_list = self.yolo.detect_image(image) # detect the objects using already trained YOLO 
             image_size = image.size
             q,i = list(),0 
             for position in position_list:
-                if position["class"] == "car":
-                    prediction = self.carClassifier.classify_car(image,position,frame_no,i)
+                if position["class"] == "car": # Only useful classes for our case is Car
+                    prediction = self.carClassifier.classify_car(image,position,frame_no,i) # use car classifier which contained our ML Model 
                     i=i+1
                     position = (position["left"] + 10,position["top"] + 10)
                     car = Car(position,prediction)
                     q.append(car)
             self.detectedCars[frame_no] = (q,image)
         print("Standard implementation time for car detection and classification task : %s seconds" % (time.time() - start_time))
-        """
         ##########################
-        # Optimized implementation of car detection and classification with multithreading/thread pool
+        """
+        # APPROCH 2: Optimized implementation of car detection and classification with multithreading/thread pool
         start_time = time.time()
         executor = ThreadPoolExecutor(100)
         for frame in queue:
@@ -64,8 +67,9 @@ class ObjectDetector:
             image_size = image.size
             executor.submit(self.detection_and_classification_task(frame_no,image))
         print("--- Optimized implementation time for car detection and classification task : %s seconds ---" % (time.time() - start_time))
-        ##########################  
         """
+        ##########################  
+        # Save the output video with proper marking and Car types 
         # Reference : https://learnopencv.com/read-write-and-display-a-video-using-opencv-cpp-python/
         video = cv2.VideoWriter('Output.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, image_size)
         for i in range(1,len(queue)+1):

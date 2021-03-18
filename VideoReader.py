@@ -15,12 +15,12 @@ import xlwt
 class VideoReader:
     def __init__(self,videopath):
         self.videopath = videopath
-        self.objectDetector = ObjectDetector()
+        self.objectDetector = ObjectDetector() # Object of ObjectDetector (Which detects cars and then clasify them in SUV or Sedan)
         self.frame_no = 1
         self.queue = list()
         
     def process(self):
-        # Read the assignment clip
+        # Read the clip
         carVideo = cv2.VideoCapture(self.videopath)
         carVideo.set(cv2.CAP_PROP_FPS,30)
         fps = carVideo.get(cv2.CAP_PROP_FPS)
@@ -58,7 +58,7 @@ class VideoReader:
         print("<<::::: STATISTICS AND RESULTS GENERATION STARTED :::::>>")
 
         # Reference : https://www.geeksforgeeks.org/writing-excel-sheet-using-python/
-        workbook = xlwt.Workbook()  
+        workbook = xlwt.Workbook()  # Create a excel workbook
         sheet = workbook.add_sheet("Count of cars per frame") 
         # Specifying style 
         style = xlwt.easyxf('font: bold 1') 
@@ -67,6 +67,7 @@ class VideoReader:
         sheet.write(0, 1, 'Sedan', style) 
         sheet.write(0, 2, 'SUV', style) 
         sheet.write(0, 3, 'Total', style) 
+        # Insert Frame number, number of sedan cars, number of SUV cars and number of total cars
         for k in detectedCars:
             #print("\nFrame no : ",k)
             countSedan,countSUV = 0,0
@@ -80,7 +81,7 @@ class VideoReader:
             sheet.write(k, 1, str(countSedan))
             sheet.write(k, 2, str(countSUV)) 
             sheet.write(k, 3, len(detectedCars[k][0])) 
-                
+        # save the workbook             
         workbook.save("Car_Results.xls") 
         print("<<::::: Statistics and result generation ended :::::>>")
                 
