@@ -14,6 +14,9 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 from multiprocessing import Process
 from multiprocessing import Pool
+import multiprocessing as mp
+from multiprocessing import Queue
+from threading import Thread
 
 class ObjectDetector:
     def __init__(self):
@@ -58,16 +61,14 @@ class ObjectDetector:
             self.detectedCars[frame_no] = (q,image)
         print("Standard implementation time for car detection and classification task : %s seconds" % (time.time() - start_time))
         ##########################
-        """
         # APPROCH 2: Optimized implementation of car detection and classification with multithreading/thread pool
-        start_time = time.time()
+        """start_time = time.time()
         executor = ThreadPoolExecutor(100)
         for frame in queue:
             frame_no,image = frame.get_frame_no(),frame.get_image()
             image_size = image.size
             executor.submit(self.detection_and_classification_task(frame_no,image))
-        print("--- Optimized implementation time for car detection and classification task : %s seconds ---" % (time.time() - start_time))
-        """
+        print("--- Optimized implementation time for car detection and classification task : %s seconds ---" % (time.time() - start_time))"""
         ##########################  
         # Save the output video with proper marking and Car types 
         # Reference : https://learnopencv.com/read-write-and-display-a-video-using-opencv-cpp-python/
