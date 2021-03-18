@@ -3,8 +3,11 @@
 Created on Sat Mar 13 11:14:18 2021
 
 @author: prakh
+
+This is a python script to calculate F1 score of car count,F1 score of sedan car count and F1 score of SUV car Count
 """
-from sklearn.metrics import f1_score
+# Import libraries
+from sklearn.metrics import f1_score,accuracy_score
 import numpy as np
 import pandas as pd
 
@@ -15,6 +18,8 @@ Predicted_Results = pd.read_excel("Car_Results.xls")
 # Toatl Cars
 TotalCarTrue = Ground_Truth_Results.Total
 TotalCarPredicted = Predicted_Results.Total
+
+print("Accuracy : ",accuracy_score(TotalCarTrue,TotalCarPredicted))
 
 # Query-1
 TotalCarsScore = f1_score(TotalCarTrue, TotalCarPredicted, average='weighted')

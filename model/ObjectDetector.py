@@ -37,7 +37,7 @@ class ObjectDetector:
                   
     def detection(self,queue):
         # For testing purpose 
-        queue = queue[:30]
+        # queue = queue[:50]
         # Standard implementation of car detection and classification 
         start_time = time.time()
         for frame in queue:

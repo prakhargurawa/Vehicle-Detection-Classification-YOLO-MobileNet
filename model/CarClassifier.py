@@ -16,6 +16,8 @@ class CarClassifier:
         print("<<::::: Loading PreTrained Model Weigths :::::>>")
         #self.model = keras.models.load_model('saved_models/Mobilenet_RMSProp_50epoch_car_classification')
         self.model = keras.models.load_model('saved_models/Mobilenet_Adam_50epoch_car_classification')
+        #self.model = keras.models.load_model('saved_models/Mobilenet_Adam_50epoch_car_classificationX')
+        #self.model = keras.models.load_model('saved_models/Mobilenet_Adam_50epoch_car_classification_with_data_augmentation')
         print("<<::::: Loading PreTrained Model Weigths Completed :::::>>")
             
     def load_image(img, show=False):

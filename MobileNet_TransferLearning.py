@@ -4,7 +4,6 @@ Created on Thu Mar  4 21:01:46 2021
 
 @author: prakh
 """
-
 # Code reference : https://github.com/ferhat00/Deep-Learning/blob/master/Transfer%20Learning%20CNN/Transfer%20Learning%20in%20Keras%20using%20MobileNet.ipynb
 
 # Import necessary libraries
@@ -15,6 +14,7 @@ from keras.layers import Dense, Flatten,Dropout
 from keras.models import Sequential
 from keras.preprocessing import image
 from keras.preprocessing.image import ImageDataGenerator
+from keras import regularizers
 import numpy as np
 import matplotlib.pyplot as plt
 #from PIL import Image
@@ -27,9 +27,23 @@ base_model = MobileNetV2(weights='imagenet',include_top=False,input_shape=(180, 
 # Freeze the base model
 base_model.trainable = False
 
+"""
+# Regularization:
+    These layers expose 3 keyword arguments:
+
+        kernel_regularizer: Regularizer to apply a penalty on the layer's kernel
+        bias_regularizer: Regularizer to apply a penalty on the layer's bias
+        activity_regularizer: Regularizer to apply a penalty on the layer's output
+    
+    Avaialble regularizers:
+        The L1 regularization penalty is computed as: loss = l1 * reduce_sum(abs(x))
+        The L2 regularization penalty is computed as: loss = l2 * reduce_sum(square(x))
+"""
+# Reference : https://keras.io/api/layers/regularizers/ (the default value used is l1=0.01)
 model = Sequential([
         base_model,
-        Dense(512, activation='relu'),
+        #Dense(512, activation='relu',kernel_regularizer='l1'), 
+        Dense(512, activation='relu'), 
         Dropout(0.2),
         Dense(512, activation='relu'),
         Dropout(0.2),
@@ -41,12 +55,27 @@ model = Sequential([
 # Unfreeze the new layers 
 for layer in model.layers[0:]:
     layer.trainable =  True"""
-        
+    
+print("************************ LAYERS ************************")        
 for layer in model.layers:
     print(layer.name,layer.trainable)
+print("********************************************************")    
+
+# Reference : https://www.pyimagesearch.com/2019/07/08/keras-imagedatagenerator-and-data-augmentation/
+"""
+train_datagen = ImageDataGenerator(preprocessing_function=keras.applications.mobilenet.preprocess_input,validation_split=0.2,
+                                   rescale=1./255,
+                                   shear_range=0.1,
+                                   zoom_range=0.1,
+                                   width_shift_range=0.1,
+                                   height_shift_range=0.1,
+                                   horizontal_flip=True,
+                                   vertical_flip=True)"""
 
 train_datagen = ImageDataGenerator(preprocessing_function=keras.applications.mobilenet.preprocess_input,validation_split=0.2)
 
+# Create a dataset with 2 classes SUV and Sedan, the data has been scraped using google images
+# and Stanford Car Dataset (https://www.kaggle.com/jutrera/stanford-car-dataset-by-classes-folder?select=anno_train.csv or https://ai.stanford.edu/~jkrause/cars/car_dataset.html)
 train_data_dir = 'D:\\NUIG-2\\Research-Topics-AI\\Assignment1\keras-yolo3\\dataset'
 
 train_generator = train_datagen.flow_from_directory(
@@ -75,10 +104,11 @@ print(model.summary())
 
 # Adam optimizer,loss function will be binary cross entropy,evaluation metric will be accuracy
 algo = "Adam"
-model.compile(optimizer = keras.optimizers.Adam(1e-5), loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = keras.optimizers.Adam(lr=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
 
-#algo = "RMSProp"
-#model.compile(optimizer= keras.optimizers.RMSprop(lr=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
+# Uncomment below to use RMSProp
+# algo = "RMSProp"
+# model.compile(optimizer= keras.optimizers.RMSprop(lr=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
 """
 NOTE :
     There might be some isuue like:
@@ -90,7 +120,7 @@ NOTE :
 """
 step_size_train=train_generator.n//train_generator.batch_size
 step_size_val=validation_generator.n//validation_generator.batch_size
-ep = 50
+ep = 20
 
 history = model.fit_generator(generator=train_generator,
                    steps_per_epoch=step_size_train,

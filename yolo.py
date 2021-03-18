@@ -18,16 +18,33 @@ from yolo3.utils import letterbox_image
 import os
 from keras.utils import multi_gpu_model
 
+# I changed nms score from 0.3 to 0.45
+# Reference : https://medium.com/analytics-vidhya/you-only-look-once-yolo-implementing-yolo-in-less-than-30-lines-of-python-code-97fb9835bfd2#:~:text=YOLO%20uses%20Non%2DMaximal%20Suppression,this%20NMS%20threshold%20to%200.6.
+# Non-Maximal Suppression(NMS)Score and Intersection Over Union Threshold(IOU) can improve our output F1 scores
 class YOLO(object):
+    # If using Tiny Yolo use this (Tiny YOLO is a much smaller and faster network which can process 220	fps)
+    _defaults = {
+        "model_path": 'model_data/yolo_tiny.h5',
+        "anchors_path": 'model_data/yolo_tiny_anchors.txt',
+        "classes_path": 'model_data/coco_classes.txt',
+        "score" : 0.2,
+        "iou" : 0.2,
+        "model_image_size" : (416, 416),
+        "gpu_num" : 1,
+    }
+    # To use YOLO model uncomment bellow line, it will be slower but with a better mAP then TinyYolo
+    # you can vary score and iou as the detection depends on these factors
+    """
+    # If using Yolo use this 
     _defaults = {
         "model_path": 'model_data/yolo.h5',
         "anchors_path": 'model_data/yolo_anchors.txt',
         "classes_path": 'model_data/coco_classes.txt',
-        "score" : 0.3,
-        "iou" : 0.45,
+        "score" : 0.2,
+        "iou" : 0.3,
         "model_image_size" : (416, 416),
         "gpu_num" : 1,
-    }
+    }"""
 
     @classmethod
     def get_defaults(cls, n):
