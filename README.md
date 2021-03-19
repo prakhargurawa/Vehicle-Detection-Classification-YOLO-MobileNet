@@ -24,6 +24,14 @@
 
 ![alt text](https://github.com/prakhargurawa/Vehicle-Detection-Classification-YOLO-MobileNet/blob/main/saved_models/MobileNetModel.png?raw=true)
 
+## MobileNet Transfer learning model:
+
+![alt text](https://github.com/prakhargurawa/Vehicle-Detection-Classification-YOLO-MobileNet/blob/main/images/model.png?raw=true)
+
+## Vision pipeline:
+
+![alt text](https://github.com/prakhargurawa/Vehicle-Detection-Classification-YOLO-MobileNet/blob/main/images/pipeline.png?raw=true)
+
 ## Results when compared with GroundTruth 
 * Use model/ScoreCalculator.py for F1 score calculation
 * The results might seem low, but to be honest F1 Score wrt grouth truth is little harsh for this use case.
