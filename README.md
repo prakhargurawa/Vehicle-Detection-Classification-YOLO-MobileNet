@@ -16,6 +16,8 @@
 * python MobileNet_TransferLearning.py (Feel free to change Optimizer/Epoch or any other ML technique according to your requirement) By Default I haev used Adam optimer with lr=0.0001 for 20 Epoch
 * python VideoReader.py
 
+### Note: To know more about system please go through Vehicle_Detection_YOLO.pdf
+
 ## Working Demo:
 
 ![alt text](https://github.com/prakhargurawa/Vehicle-Detection-Classification-YOLO-MobileNet/blob/main/saved_models/Output.gif?raw=true)
