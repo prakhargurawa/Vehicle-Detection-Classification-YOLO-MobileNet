@@ -17,6 +17,7 @@ from multiprocessing import Pool
 import multiprocessing as mp
 from multiprocessing import Queue
 from threading import Thread
+import matplotlib.pyplot as plt
 
 class ObjectDetector:
     def __init__(self):
@@ -46,11 +47,20 @@ class ObjectDetector:
         # can find list of classes from the file model_data/coco_classes
         # APPROCH 1: Standard implementation of car detection and classification 
         start_time = time.time()
+        total_time = 0
+        objectDetectionTime = list()
+        classificationTime = list()
+        
         for frame in queue:
             frame_no,image = frame.get_frame_no(),frame.get_image()
+            print("\nProcessing frame no : ",frame_no)
+            start_time = time.time()
             image,position_list = self.yolo.detect_image(image) # detect the objects using already trained YOLO 
+            detectionTime = time.time() - start_time            # time to detect in this frame
+            objectDetectionTime.append(detectionTime)           # save object detection time per frame in a list
             image_size = image.size
             q,i = list(),0 
+            start_time = time.time()
             for position in position_list:
                 if position["class"] == "car": # Only useful classes for our case is Car
                     prediction = self.carClassifier.classify_car(image,position,frame_no,i) # use car classifier which contained our ML Model 
@@ -59,16 +69,23 @@ class ObjectDetector:
                     car = Car(position,prediction)
                     q.append(car)
             self.detectedCars[frame_no] = (q,image)
-        print("Standard implementation time for car detection and classification task : %s seconds" % (time.time() - start_time))
+            classifyTime = time.time() - start_time             # time to classify in this frame
+            classificationTime.append(classifyTime)             # save classification time per frame in a list
+            total_time = total_time + detectionTime + classifyTime # total time used by this frame is classification time plus detection time
+            print("for frame no : ",frame_no," classification time : ",classifyTime," for ",len(q)," cars with detection time : ",detectionTime)
+        
+        print("Standard implementation time for car detection and classification task : %s seconds" % total_time)
         ##########################
+        """
         # APPROCH 2: Optimized implementation of car detection and classification with multithreading/thread pool
-        """start_time = time.time()
+        start_time = time.time()
         executor = ThreadPoolExecutor(100)
         for frame in queue:
             frame_no,image = frame.get_frame_no(),frame.get_image()
             image_size = image.size
             executor.submit(self.detection_and_classification_task(frame_no,image))
-        print("--- Optimized implementation time for car detection and classification task : %s seconds ---" % (time.time() - start_time))"""
+        print("Optimized implementation time for car detection and classification task : %s seconds ---" % (time.time() - start_time))
+        """
         ##########################  
         # Save the output video with proper marking and Car types 
         # Reference : https://learnopencv.com/read-write-and-display-a-video-using-opencv-cpp-python/
@@ -107,12 +124,19 @@ class ObjectDetector:
                     break
             else: 
                 break
+        
+        # Display the plots of classification and detection time per frame 
+        plt.figure(figsize=(20, 20))
+        plt.plot(objectDetectionTime[1:],'r*-', label="YOLO detection time")
+        plt.plot(classificationTime[1:],'y--',label="ML classification time")
+        plt.title("YOLO detection time and Model classification time per frame")
+        plt.legend(loc='lower right')
+        plt.xlabel("Frame")
+        plt.ylabel("Time per frame")
+        plt.show()
 
         # When everything done, release the video capture object
         cap.release()
         # Closes all the frames
         cv2.destroyAllWindows()
         return self.detectedCars
-
-
-
