@@ -18,6 +18,7 @@ import multiprocessing as mp
 from multiprocessing import Queue
 from threading import Thread
 import matplotlib.pyplot as plt
+from model.BoundedExecutor import BoundedExecutor
 
 class ObjectDetector:
     def __init__(self):
@@ -46,6 +47,7 @@ class ObjectDetector:
         # Object Detection is done using YOLO or TinyYOLO with is trained on COCO Dataset which has 80 classes 
         # can find list of classes from the file model_data/coco_classes
         # APPROCH 1: Standard implementation of car detection and classification 
+        """
         start_time = time.time()
         total_time = 0
         objectDetectionTime = list()
@@ -75,6 +77,7 @@ class ObjectDetector:
             print("for frame no : ",frame_no," classification time : ",classifyTime," for ",len(q)," cars with detection time : ",detectionTime)
         
         print("Standard implementation time for car detection and classification task : %s seconds" % total_time)
+        """
         ##########################
         """
         # APPROCH 2: Optimized implementation of car detection and classification with multithreading/thread pool
@@ -87,6 +90,16 @@ class ObjectDetector:
         print("Optimized implementation time for car detection and classification task : %s seconds ---" % (time.time() - start_time))
         """
         ##########################  
+        """
+        start_time = time.time()
+        executor = BoundedExecutor(20, 200)
+        for frame in queue:
+            frame_no,image = frame.get_frame_no(),frame.get_image()
+            image_size = image.size
+            executor.submit(self.detection_and_classification_task(frame_no,image))
+        
+        print("Optimized implementation time for car detection and classification task : %s seconds ---" % (time.time() - start_time))
+        """
         # Save the output video with proper marking and Car types 
         # Reference : https://learnopencv.com/read-write-and-display-a-video-using-opencv-cpp-python/
         video = cv2.VideoWriter('Output.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, image_size)
