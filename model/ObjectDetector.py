@@ -47,7 +47,6 @@ class ObjectDetector:
         # Object Detection is done using YOLO or TinyYOLO with is trained on COCO Dataset which has 80 classes 
         # can find list of classes from the file model_data/coco_classes
         # APPROCH 1: Standard implementation of car detection and classification 
-        """
         start_time = time.time()
         total_time = 0
         objectDetectionTime = list()
@@ -77,7 +76,6 @@ class ObjectDetector:
             print("for frame no : ",frame_no," classification time : ",classifyTime," for ",len(q)," cars with detection time : ",detectionTime)
         
         print("Standard implementation time for car detection and classification task : %s seconds" % total_time)
-        """
         ##########################
         """
         # APPROCH 2: Optimized implementation of car detection and classification with multithreading/thread pool
